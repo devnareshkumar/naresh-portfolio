@@ -1,0 +1,16 @@
+import {
+  ApplicationConfig,
+  provideZonelessChangeDetection,
+  provideBrowserGlobalErrorListeners,
+} from '@angular/core';
+import {provideRouter, withInMemoryScrolling} from '@angular/router';
+
+import {routes} from './app.routes';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZonelessChangeDetection(),
+    provideBrowserGlobalErrorListeners(),
+    provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })),
+  ],
+};
