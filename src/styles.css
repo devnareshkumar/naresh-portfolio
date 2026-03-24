@@ -12,10 +12,15 @@
   --color-dark-bg: #050505;
 }
 
+:root {
+  color-scheme: dark;
+}
+
 @layer base {
   body {
     @apply bg-dark-bg text-white font-sans antialiased selection:bg-primary/30 selection:text-primary;
     overflow-x: hidden;
+    transition: background-color 300ms ease, color 300ms ease;
   }
 
   h1, h2, h3, h4 {
@@ -46,4 +51,71 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+body[data-theme='light'] {
+  color-scheme: light;
+  background:
+    radial-gradient(circle at top, rgba(16, 185, 129, 0.12), transparent 32%),
+    linear-gradient(180deg, #f7fbfa 0%, #edf4f2 100%);
+  color: #08110f;
+}
+
+body[data-theme='light'] .glass {
+  background: rgba(255, 255, 255, 0.72);
+  border-color: rgba(8, 17, 15, 0.08);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.06);
+}
+
+body[data-theme='light'] .theme-switcher {
+  background: rgba(255, 255, 255, 0.88);
+  border-color: rgba(8, 17, 15, 0.08);
+}
+
+body[data-theme='light'] .theme-switcher button {
+  color: rgba(8, 17, 15, 0.72);
+}
+
+body[data-theme='light'] .theme-switcher button[aria-pressed='true'] {
+  color: #ffffff;
+}
+
+body[data-theme='light'] app-animated-background canvas {
+  opacity: 0.2;
+  filter: saturate(0.75);
+}
+
+body[data-theme='light'] .download-button {
+  color: #08110f;
+}
+
+body[data-theme='light'] .download-button:hover {
+  color: #08110f;
+}
+
+body[data-theme='light'] .text-white\/60,
+body[data-theme='light'] .text-white\/40,
+body[data-theme='light'] .text-white\/20 {
+  color: rgba(8, 17, 15, 0.72) !important;
+}
+
+body[data-theme='light'] .bg-white\/\[0\.02\],
+body[data-theme='light'] .bg-white\/10,
+body[data-theme='light'] .bg-white\/5 {
+  background-color: rgba(255, 255, 255, 0.55) !important;
+}
+
+body[data-theme='light'] .border-white\/5,
+body[data-theme='light'] .border-white\/10,
+body[data-theme='light'] .border-white\/15 {
+  border-color: rgba(8, 17, 15, 0.1) !important;
+}
+
+body[data-theme='light'] .hover\:bg-white\/10:hover,
+body[data-theme='light'] .hover\:bg-primary\/10:hover {
+  background-color: rgba(16, 185, 129, 0.12) !important;
+}
+
+body[data-theme='light'] .hover\:text-primary:hover {
+  color: #059669 !important;
 }

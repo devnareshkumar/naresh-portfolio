@@ -1,8 +1,10 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { RESUME_DATA } from '../data/resume';
 import { animate, stagger, scroll } from 'motion';
 import { MatIconModule } from '@angular/material/icon';
+
+type ThemeMode = 'light' | 'dark' | 'system';
 
 @Component({
   selector: 'app-home',
@@ -22,9 +24,25 @@ import { MatIconModule } from '@angular/material/icon';
           <a href="#projects" class="hover:text-primary transition-colors">Projects</a>
           <a href="#skills" class="hover:text-primary transition-colors">Skills</a>
         </div>
-        <button (click)="downloadResume()" class="cursor-pointer text-xs font-mono uppercase tracking-widest px-4 py-2 border border-primary/30 rounded-full hover:bg-primary/10 transition-colors">
-          Resume
-        </button>
+        <div class="flex items-center gap-3">
+          <button (click)="downloadResume()" class="cursor-pointer text-xs font-mono uppercase tracking-widest px-4 py-2 border border-primary/30 rounded-full hover:bg-primary/10 transition-colors">
+            Resume
+          </button>
+          <div class="theme-switcher glass flex items-center rounded-full p-1">
+            @for (option of themeOptions; track option.value) {
+              <button
+                type="button"
+                [attr.aria-label]="'Switch theme to ' + option.label"
+                [attr.title]="option.label"
+                [attr.aria-pressed]="selectedTheme === option.value"
+                (click)="setTheme(option.value)"
+                [class]="getThemeButtonClass(option.value)"
+              >
+                <mat-icon class="scale-[0.8]">{{ option.icon }}</mat-icon>
+              </button>
+            }
+          </div>
+        </div>
       </nav>
 
       <!-- Hero Section -->
@@ -40,12 +58,15 @@ import { MatIconModule } from '@angular/material/icon';
             {{ data.basics.summary }}
           </p>
           <div class="flex flex-wrap gap-4 hero-reveal">
-            <a href="#experience" class="px-8 py-4 bg-primary text-dark-bg font-bold rounded-xl hover:scale-105 transition-transform flex items-center gap-2">
-              View Experience <mat-icon class="scale-75">arrow_downward</mat-icon>
+            <a href="#experience" class="group relative overflow-hidden min-w-[14rem] justify-center px-8 py-4 bg-primary text-dark-bg font-bold rounded-xl border border-primary/70 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(16,185,129,0.28)] transition-all duration-300 flex items-center gap-2">
+              <span class="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition-all duration-500 group-hover:left-[110%] group-hover:opacity-100"></span>
+              <span class="relative z-10 transition-transform duration-300 group-hover:-translate-x-0.5">View Experience</span>
+              <mat-icon class="relative z-10 scale-75 transition-all duration-300 group-hover:translate-y-0.5 group-hover:scale-95">arrow_downward</mat-icon>
             </a>
-            <button (click)="downloadResume()" class="group cursor-pointer px-8 py-4 glass text-white font-bold rounded-xl border border-white/15 hover:border-primary/45 hover:bg-primary/10 hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] transition-all duration-300 flex items-center gap-2">
-              <span>Download CV</span>
-              <mat-icon class="scale-75 transition-transform duration-300 group-hover:translate-y-0.5 group-hover:scale-90">download</mat-icon>
+            <button (click)="downloadResume()" class="download-button group relative overflow-hidden cursor-pointer min-w-[14rem] justify-center px-8 py-4 glass font-bold rounded-xl border border-white/15 hover:border-primary/70 hover:bg-primary/18 hover:-translate-y-0.5 hover:shadow-[0_0_40px_rgba(16,185,129,0.28)] transition-all duration-300 flex items-center gap-2">
+              <span class="pointer-events-none absolute inset-y-0 -left-1/3 w-1/3 -skew-x-12 bg-gradient-to-r from-transparent via-primary/35 to-transparent opacity-0 transition-all duration-500 group-hover:left-[110%] group-hover:opacity-100"></span>
+              <span class="relative z-10 transition-all duration-300 group-hover:text-primary group-hover:-translate-x-0.5">Download CV</span>
+              <mat-icon class="relative z-10 scale-75 transition-all duration-300 group-hover:translate-y-0.5 group-hover:scale-95 group-hover:text-primary">download</mat-icon>
             </button>
           </div>
         </div>
@@ -230,8 +251,21 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class Home implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly document = inject(DOCUMENT);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
   private readonly resumeUrl = 'https://raw.githubusercontent.com/devnareshkumar/devnareshkumar/main/Naresh-Kumar-Katta-Resume.pdf';
+  private mediaQuery?: MediaQueryList;
+  private readonly systemThemeListener = () => {
+    if (this.selectedTheme === 'system') {
+      this.applyTheme('system');
+    }
+  };
+  selectedTheme: ThemeMode = 'system';
+  themeOptions = [
+    { label: 'Light', value: 'light' as ThemeMode, icon: 'light_mode' },
+    { label: 'Dark', value: 'dark' as ThemeMode, icon: 'dark_mode' },
+    { label: 'System', value: 'system' as ThemeMode, icon: 'desktop_windows' },
+  ];
   data = RESUME_DATA;
   impactItems = [
     { label: 'Experience', value: '10.8y' },
@@ -247,9 +281,30 @@ export class Home implements OnInit {
   ];
 
   ngOnInit() {
+    this.initTheme();
+
     if (this.isBrowser) {
       this.initAnimations();
     }
+  }
+
+  ngOnDestroy() {
+    this.mediaQuery?.removeEventListener('change', this.systemThemeListener);
+  }
+
+  setTheme(theme: ThemeMode) {
+    this.selectedTheme = theme;
+    this.applyTheme(theme);
+  }
+
+  getThemeButtonClass(theme: ThemeMode) {
+    const isActive = this.selectedTheme === theme;
+    return [
+      'cursor-pointer rounded-full h-9 w-9 transition-all duration-300 flex items-center justify-center',
+      isActive
+        ? 'bg-primary text-dark-bg shadow-[0_0_20px_rgba(16,185,129,0.22)]'
+        : 'text-white/65 hover:text-primary hover:bg-white/8'
+    ].join(' ');
   }
 
   private initAnimations() {
@@ -293,5 +348,32 @@ export class Home implements OnInit {
     } catch {
       window.open(this.resumeUrl, '_blank', 'noopener,noreferrer');
     }
+  }
+
+  private initTheme() {
+    if (!this.isBrowser) {
+      return;
+    }
+
+    this.mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    this.mediaQuery.addEventListener('change', this.systemThemeListener);
+
+    const storedTheme = localStorage.getItem('theme-preference');
+    const theme = this.isThemeMode(storedTheme) ? storedTheme : 'system';
+    this.selectedTheme = theme;
+    this.applyTheme(theme);
+  }
+
+  private applyTheme(theme: ThemeMode) {
+    const resolvedTheme = theme === 'system'
+      ? (this.mediaQuery?.matches ? 'dark' : 'light')
+      : theme;
+
+    this.document.body.dataset['theme'] = resolvedTheme;
+    localStorage.setItem('theme-preference', theme);
+  }
+
+  private isThemeMode(value: string | null): value is ThemeMode {
+    return value === 'light' || value === 'dark' || value === 'system';
   }
 }
