@@ -1,20 +1,50 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Naresh Kumar Katta Portfolio
 
-# Run and deploy your AI Studio app
+Personal portfolio site built with Angular and deployed on Netlify.
 
-This contains everything you need to run your app locally.
+## Tech Stack
 
-View your app in AI Studio: https://ai.studio/apps/9aad2857-8961-49c9-8cfa-6adf828c1245
+- Angular 21
+- Angular SSR / prerender
+- Tailwind CSS
+- Angular Material
+- Motion
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
+Prerequisite: Node.js 22+
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+2. Start the development server:
+   `npm start`
+3. Open:
+   `http://localhost:4200`
+
+## Production Build
+
+Build the app and prerender static routes:
+
+`npm run build`
+
+The output is generated in:
+
+`dist/app`
+
+## Resume Download
+
+The Resume and Download CV buttons point to the hosted PDF below:
+
+`https://raw.githubusercontent.com/devnareshkumar/devnareshkumar/main/Naresh-Kumar-Katta-Resume.pdf`
+
+To update the resume, replace that PDF in GitHub using the same file name and path.
+
+## Deployment
+
+This project is configured to deploy on Netlify.
+
+Recommended deploy flow:
+
+1. Push changes to GitHub.
+2. Trigger a Netlify deploy.
+3. Verify the home page and resume download after deploy.
