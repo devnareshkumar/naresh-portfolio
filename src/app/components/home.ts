@@ -1,5 +1,5 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RESUME_DATA } from '../data/resume';
 import { animate, stagger, scroll } from 'motion';
 import { MatIconModule } from '@angular/material/icon';
@@ -228,6 +228,8 @@ import { MatIconModule } from '@angular/material/icon';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Home implements OnInit {
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
   data = RESUME_DATA;
   impactItems = [
     { label: 'Experience', value: '10.8y' },
@@ -243,7 +245,9 @@ export class Home implements OnInit {
   ];
 
   ngOnInit() {
-    this.initAnimations();
+    if (this.isBrowser) {
+      this.initAnimations();
+    }
   }
 
   private initAnimations() {
@@ -265,6 +269,10 @@ export class Home implements OnInit {
   }
 
   downloadResume() {
+    if (!this.isBrowser) {
+      return;
+    }
+
     // In a real app, this would generate a PDF or link to one.
     // For this demo, we'll just print the page.
     window.print();

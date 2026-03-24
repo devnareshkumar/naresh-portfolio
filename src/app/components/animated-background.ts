@@ -1,4 +1,5 @@
-import { Component, ElementRef, HostListener, OnInit, ViewChild, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, ElementRef, HostListener, inject, OnDestroy, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 
 @Component({
   selector: 'app-animated-background',
@@ -8,12 +9,18 @@ import { Component, ElementRef, HostListener, OnInit, ViewChild, OnDestroy, Chan
 })
 export class AnimatedBackground implements OnInit, OnDestroy {
   @ViewChild('bgCanvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
   private ctx!: CanvasRenderingContext2D;
   private particles: Particle[] = [];
-  private animationId!: number;
+  private animationId?: number;
   private particleCount = 60;
 
   ngOnInit() {
+    if (!this.isBrowser) {
+      return;
+    }
+
     this.ctx = this.canvasRef.nativeElement.getContext('2d')!;
     this.resize();
     this.initParticles();
@@ -21,11 +28,17 @@ export class AnimatedBackground implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    cancelAnimationFrame(this.animationId);
+    if (this.animationId !== undefined) {
+      cancelAnimationFrame(this.animationId);
+    }
   }
 
   @HostListener('window:resize')
   resize() {
+    if (!this.isBrowser) {
+      return;
+    }
+
     const canvas = this.canvasRef.nativeElement;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -43,6 +56,10 @@ export class AnimatedBackground implements OnInit, OnDestroy {
   }
 
   private animate() {
+    if (!this.isBrowser) {
+      return;
+    }
+
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.drawStaticGradient();
       return;
