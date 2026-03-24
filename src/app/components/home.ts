@@ -22,7 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
           <a href="#projects" class="hover:text-primary transition-colors">Projects</a>
           <a href="#skills" class="hover:text-primary transition-colors">Skills</a>
         </div>
-        <button (click)="downloadResume()" class="text-xs font-mono uppercase tracking-widest px-4 py-2 border border-primary/30 rounded-full hover:bg-primary/10 transition-colors">
+        <button (click)="downloadResume()" class="cursor-pointer text-xs font-mono uppercase tracking-widest px-4 py-2 border border-primary/30 rounded-full hover:bg-primary/10 transition-colors">
           Resume
         </button>
       </nav>
@@ -43,7 +43,7 @@ import { MatIconModule } from '@angular/material/icon';
             <a href="#experience" class="px-8 py-4 bg-primary text-dark-bg font-bold rounded-xl hover:scale-105 transition-transform flex items-center gap-2">
               View Experience <mat-icon class="scale-75">arrow_downward</mat-icon>
             </a>
-            <button (click)="downloadResume()" class="px-8 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-colors flex items-center gap-2">
+            <button (click)="downloadResume()" class="cursor-pointer px-8 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-colors flex items-center gap-2">
               Download CV <mat-icon class="scale-75">download</mat-icon>
             </button>
           </div>
