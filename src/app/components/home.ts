@@ -43,8 +43,9 @@ import { MatIconModule } from '@angular/material/icon';
             <a href="#experience" class="px-8 py-4 bg-primary text-dark-bg font-bold rounded-xl hover:scale-105 transition-transform flex items-center gap-2">
               View Experience <mat-icon class="scale-75">arrow_downward</mat-icon>
             </a>
-            <button (click)="downloadResume()" class="cursor-pointer px-8 py-4 glass text-white font-bold rounded-xl hover:bg-white/10 transition-colors flex items-center gap-2">
-              Download CV <mat-icon class="scale-75">download</mat-icon>
+            <button (click)="downloadResume()" class="group cursor-pointer px-8 py-4 glass text-white font-bold rounded-xl border border-white/15 hover:border-primary/45 hover:bg-primary/10 hover:-translate-y-0.5 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] transition-all duration-300 flex items-center gap-2">
+              <span>Download CV</span>
+              <mat-icon class="scale-75 transition-transform duration-300 group-hover:translate-y-0.5 group-hover:scale-90">download</mat-icon>
             </button>
           </div>
         </div>
