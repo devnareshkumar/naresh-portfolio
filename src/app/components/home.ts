@@ -230,6 +230,7 @@ import { MatIconModule } from '@angular/material/icon';
 export class Home implements OnInit {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
+  private readonly resumeUrl = 'https://raw.githubusercontent.com/devnareshkumar/devnareshkumar/main/Naresh-Kumar-Katta-Resume.pdf';
   data = RESUME_DATA;
   impactItems = [
     { label: 'Experience', value: '10.8y' },
@@ -268,13 +269,28 @@ export class Home implements OnInit {
     });
   }
 
-  downloadResume() {
+  async downloadResume() {
     if (!this.isBrowser) {
       return;
     }
 
-    // In a real app, this would generate a PDF or link to one.
-    // For this demo, we'll just print the page.
-    window.print();
+    try {
+      const response = await fetch(this.resumeUrl);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch resume: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = objectUrl;
+      link.download = 'Naresh-Kumar-Katta-Resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      window.open(this.resumeUrl, '_blank', 'noopener,noreferrer');
+    }
   }
 }
